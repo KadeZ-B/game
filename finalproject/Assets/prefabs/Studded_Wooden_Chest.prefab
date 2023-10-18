@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -7739180981776911138}
   m_Layer: 0
   m_Name: Studded_Wooden_Chest
-  m_TagString: Untagged
+  m_TagString: Studded_Wooden_Chest
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

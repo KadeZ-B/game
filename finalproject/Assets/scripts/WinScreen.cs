@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuHandler : MonoBehaviour
+public class WinScreen : MonoBehaviour
 {
-    public void PlayGame(){
+    public void LevelSelection(){
         SceneManager.LoadScene("MapSelection");
-    }
-    public void QuitGame(){
-        Application.Quit();
     }
 }

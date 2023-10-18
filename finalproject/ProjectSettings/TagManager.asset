@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Studded_Wooden_Chest
   layers:
   - Default
   - TransparentFX
