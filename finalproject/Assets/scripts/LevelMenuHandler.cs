@@ -12,9 +12,12 @@ public class LevelMenuHandler : MonoBehaviour
         SceneManager.LoadScene("title");
     }
     public void level2(){
-        SceneManager.LoadScene("");
+        SceneManager.LoadScene("Level2");
     }
     public void level3(){
-        SceneManager.LoadScene("");
+        SceneManager.LoadScene("Level3");
+    }
+    public void tutorial(){
+        SceneManager.LoadScene("Tutorial");
     }
 }

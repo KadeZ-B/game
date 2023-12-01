@@ -193,7 +193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: Level Selection
 --- !u!222 &7158275
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -677,7 +677,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 483, y: 200.47}
+  m_AnchoredPosition: {x: 228, y: 339}
   m_SizeDelta: {x: 1775.5574, y: 400.9361}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2033936033
@@ -693,7 +693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.9433962, g: 0.7495501, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -713,7 +713,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Level Complete! \nReturn to Main Menu"
+  m_Text: Return to the Main menu!
 --- !u!222 &2033936034
 CanvasRenderer:
   m_ObjectHideFlags: 0

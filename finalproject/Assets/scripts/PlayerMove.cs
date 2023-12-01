@@ -1,22 +1,59 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float speed = 5.0f;
+    public float Speed
+    {
+        get { return speed; }
+    }
+
     private Rigidbody2D rb;
     private Tilemap wallsTilemap;
     private Bounds playerBounds;
     private Animator m_animator;
+    private Vector2 movement;
+
+    // Dirty Flag
+    private bool isPositionDirty = true;
+
+    public interface IPlayerObserver
+    {
+        void OnPlayerMove(Vector2 movement);
+    }
+
+    private List<IPlayerObserver> playerObservers = new List<IPlayerObserver>();
+
+    public void AddObserver(IPlayerObserver observer)
+    {
+        playerObservers.Add(observer);
+    }
+
+    public void RemoveObserver(IPlayerObserver observer)
+    {
+        playerObservers.Remove(observer);
+    }
+
+    private void NotifyObservers(Vector2 movement)
+    {
+        foreach (var observer in playerObservers)
+        {
+            observer.OnPlayerMove(movement);
+        }
+    }
+
+    public void ModifySpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        m_animator = GetComponent<Animator>(); // Corrected this line
-        // Find the "WallsMap" Tilemap in the scene (replace with your actual Tilemap name)
+        m_animator = GetComponent<Animator>();
         wallsTilemap = GameObject.Find("WallsMap").GetComponent<Tilemap>();
-
-        // Calculate the player's bounds for precise collision checks
         CalculatePlayerBounds();
     }
 
@@ -25,61 +62,63 @@ public class PlayerMovement : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
 
+        movement = new Vector2(moveX, moveY);
+        movement.Normalize();
+
+        NotifyObservers(movement);
+
         if (moveX > 0)
             transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
         else if (moveX < 0)
             transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        Vector2 movement = new Vector2(moveX, moveY);
-        movement.Normalize();
-
         if (Mathf.Abs(moveX) > Mathf.Epsilon)
             m_animator.SetInteger("AnimState", 2);
         else
             m_animator.SetInteger("AnimState", 0);
-        // Cast a ray to check for walls in the forward direction
-        RaycastHit2D hitForward = Physics2D.Raycast(transform.position, movement, movement.magnitude * speed * Time.deltaTime, LayerMask.GetMask("Walls"));
 
-        // Cast a ray to check for walls on the sides
-        RaycastHit2D hitSide = Physics2D.Raycast(transform.position, Vector2.right * moveX, Mathf.Abs(moveX) * speed * Time.deltaTime, LayerMask.GetMask("Walls"));
-
-        if (hitForward.collider == null || hitForward.distance > 0.1f)
+        // Set the position dirty when movement is detected
+        if (moveX != 0 || moveY != 0)
         {
-            // No wall detected in the forward direction, apply the movement
-            rb.velocity = movement * speed;
+            isPositionDirty = true;
         }
-        else
-        {
-            // Wall detected in the forward direction, stop the movement
-            rb.velocity = Vector2.zero;
-        }
-
-        if (hitSide.collider != null)
-        {
-            // Wall detected on the side, prevent movement in that direction
-            rb.velocity = new Vector2(0, rb.velocity.y);
-        }
-
-        CheckForWallCollisions();
     }
+
+    void FixedUpdate()
+{
+    // Check if the position is dirty before updating
+    if (isPositionDirty)
+    {
+        UpdatePlayerPosition();
+        isPositionDirty = false; // Reset the dirty flag after updating
+    }
+
+    // Apply the movement to rb.velocity
+    rb.velocity = movement * speed;
+
+    CheckForWallCollisions();
+}
 
     void CalculatePlayerBounds()
     {
-        // Calculate the player's bounds based on the collider
         playerBounds = GetComponent<Collider2D>().bounds;
+    }
+
+    void UpdatePlayerPosition()
+    {
+        // Update the player's position logic goes here
+        // For example, rb.position = new Vector2(...);
+
+        // ... Other code ...
     }
 
     void CheckForWallCollisions()
     {
         Vector2 currentPosition = transform.position;
-
-        // Perform a raycast in the direction of movement
         RaycastHit2D hit = Physics2D.Raycast(currentPosition, rb.velocity.normalized, rb.velocity.magnitude * Time.deltaTime, LayerMask.GetMask("Walls"));
 
-        // Check if the ray hit a wall tile
         if (hit.collider != null)
         {
-            // Calculate the new position to prevent collision
             Vector2 newTargetPosition = hit.point - rb.velocity.normalized * playerBounds.extents.magnitude * 1.1f;
             rb.position = newTargetPosition;
             rb.velocity = Vector2.zero;

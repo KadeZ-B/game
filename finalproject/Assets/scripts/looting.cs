@@ -2,20 +2,43 @@ using UnityEngine;
 
 public class ChestController : MonoBehaviour
 {
+    public bool isInRange = false;
     private bool isOpen = false;
     private ChestManager chestManager; // Reference to the ChestManager.
+
+    public float interactionRadius = 2.0f; // Radius for interaction with the player.
+    public string playerTag = "Player"; // The tag of the player GameObject.
 
     private void Start()
     {
         chestManager = GameObject.FindObjectOfType<ChestManager>();
     }
 
-    private void OnMouseDown()
+    private void Update()
     {
-        if (!isOpen)
+        // Check if the player is in range.
+        isInRange = IsPlayerInRange();
+
+        // Handle interaction if the player is in range and clicks.
+        if (isInRange && Input.GetMouseButtonDown(0) && !isOpen)
         {
             OpenChest();
         }
+    }
+
+    private bool IsPlayerInRange()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
+
+        foreach (var collider in colliders)
+        {
+            if (collider.CompareTag(playerTag))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OpenChest()
